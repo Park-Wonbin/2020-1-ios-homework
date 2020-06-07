@@ -12,7 +12,9 @@ import SwiftUI
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    
+    // Environment object
+    let session = Session()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -26,16 +28,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Add `@Environment(\.managedObjectContext)` in the views that will need the context.
         let contentView = ContentView().environment(\.managedObjectContext, context)
 
-        let session = Session()
-
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
             window.rootViewController = UIHostingController(rootView:
-                contentView.environmentObject(session))
+                contentView.environmentObject(self.session))
             self.window = window
             window.makeKeyAndVisible()
         }
+        
+        // Quick Actions
+        if let shortcutItem = connectionOptions.shortcutItem {
+            self.session.quickAction(shortcutItem.type)
+        }
+    }
+    
+    // Quick Actions (App has been loaded)
+    func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        self.session.quickAction(shortcutItem.type)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

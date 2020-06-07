@@ -14,6 +14,15 @@ class Session: ObservableObject {
     @Published var isAuth = false
     private let keychain: KeychainSwift
     
+    private var newMemoAction = false
+    var newMemo: Bool {
+        get {
+            let temp = newMemoAction
+            newMemoAction = false
+            return temp
+        }
+    }
+    
     init() {
         keychain = KeychainSwift()
     }
@@ -43,4 +52,9 @@ class Session: ObservableObject {
         }
     }
     
+    func quickAction(_ quickAction: String) {
+        if quickAction == "NewMemo" {
+            newMemoAction = true
+        }
+    }
 }
